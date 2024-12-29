@@ -26,7 +26,7 @@ namespace Algorithm
     {
         private BinaryHeap<JpsNode> _openList = new BinaryHeap<JpsNode>();
         private HashSet<JpsNode> _closeSet = new HashSet<JpsNode>();
-        private Dictionary<Vector2Int, JpsNode> _jpsNodeDic; //存储所有的跳点
+        private Dictionary<Vector2Int, JpsNode> _jpsNodeDic = new Dictionary<Vector2Int, JpsNode>(); //存储所有的跳点
         private Vector2Int _start;
         private Vector2Int _end;
         private IGrid _grid;
@@ -80,11 +80,12 @@ namespace Algorithm
         private List<Vector2Int> ReturnFinalPath(JpsNode endNode)
         {
             List<Vector2Int> path = new List<Vector2Int>();
-            JpsNode tmpNode = endNode;
-            while(tmpNode != null)
+            Vector2Int tmpPos = endNode.Pos;
+            while(tmpPos != _start)
             {
-                path.Add(tmpNode.Pos);
-                tmpNode = tmpNode.Parent;
+                path.Add(tmpPos);
+                _jpsNodeDic.TryGetValue(tmpPos, out JpsNode node);
+                tmpPos = node.ParentPos;
             }
             return path;
         }
@@ -101,10 +102,9 @@ namespace Algorithm
         {
             //查找该跳点
             _jpsNodeDic.TryGetValue(pos, out JpsNode jpsNode);
-            _jpsNodeDic.TryGetValue(parentPos, out JpsNode parentNode);
             if (jpsNode == null)
             {
-                jpsNode = new JpsNode(pos, parentNode, dir, gCost, JPSHelper.CalcManhattan(pos, _end));
+                jpsNode = new JpsNode(pos, parentPos, dir, gCost, JPSHelper.CalcManhattan(pos, _end));
                 _jpsNodeDic.Add(pos, jpsNode);
             }
             //是否已在close中
@@ -113,7 +113,7 @@ namespace Algorithm
                 //检查是否更低代价
                 if (jpsNode.G > gCost)
                 {
-                    jpsNode.Parent = parentNode;
+                    jpsNode.ParentPos = parentPos;
                     jpsNode.G = gCost;
                     jpsNode.SearchDirections = dir;
                     _closeSet.Remove(jpsNode);
@@ -125,7 +125,7 @@ namespace Algorithm
                 //检查是否更低代价
                 if (jpsNode.G > gCost)
                 {
-                    jpsNode.Parent = parentNode;
+                    jpsNode.ParentPos = parentPos;
                     jpsNode.G = gCost;
                     jpsNode.SearchDirections = dir;
                     _openList.Update(_openList.IndexOf(jpsNode));

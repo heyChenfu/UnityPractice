@@ -12,7 +12,8 @@ BatchRendererGroup+Animation Texture+JobSystem+RVO大批量角色渲染
 https://weaverdev.io/projects/bonehead-procedural-animation
 ![效果图](images/TwoBoneIK.gif)
 ## PathFinding
-几种寻路算法AStar,Dijkstra,VectorField的学习和实现
+几种寻路算法Dijkstra, AStar, Jump Point Search, VectorField的学习和实现
+![效果图](images/JumpPointSearch.gif)
 
 ## Planar Shadow
 ![效果图](images/平面阴影.png)
