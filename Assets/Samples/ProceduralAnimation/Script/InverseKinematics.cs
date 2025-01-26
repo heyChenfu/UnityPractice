@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
-//Two-Bone IK
+/// <summary>
+/// Two-Bone IK的核心是 计算角度并旋转骨骼链，使末端骨骼到达目标位置
+/// 需要根骨骼，中间骨骼，末端骨骼以及目标点(末端骨骼所需到达位置)
+/// </summary>
 public class InverseKinematics : MonoBehaviour
 {
     //骨骼链末端需要到达的目标位置
@@ -35,6 +38,12 @@ public class InverseKinematics : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 计算骨骼链总长度，如果目标点到根骨骼长度大于骨骼链总长度则目标点不可达，骨骼链会被拉直
+    /// 当目标点可达时，Two-Bone IK 的核心是利用三角形法则根据余弦定理计算根骨骼旋转角度
+    /// 根骨骼的旋转角θ有余弦定理cos(θ)=(a^2+c^2−b^2)/2ac a第一段骨骼的长度，b第二段骨骼的长度，c起点到目标点的距离
+    /// 中间骨骼旋转角度也可以同理计算
+    /// </summary>
     void LateUpdate()
     {
         Vector3 towardPole = pole.position - firstBone.position;
@@ -44,6 +53,7 @@ public class InverseKinematics : MonoBehaviour
         float rootBoneLength = Vector3.Distance(firstBone.position, secondBone.position);
         //第二个骨骼到第三个骨骼距离
         float secondBoneLength = Vector3.Distance(secondBone.position, thirdBone.position);
+        //骨骼链总长度
         float totalChainLength = rootBoneLength + secondBoneLength;
 
         // 将根骨骼朝向目标
